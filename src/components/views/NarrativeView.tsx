@@ -20,24 +20,76 @@ interface NarrativeViewProps {
 
 const TooltipTerm: React.FC<{ term: string; metaphor: string }> = ({ term, metaphor }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const termRef = React.useRef<HTMLSpanElement>(null);
+  const [tooltipStyle, setTooltipStyle] = useState<React.CSSProperties>({});
+  const [arrowStyle, setArrowStyle] = useState<React.CSSProperties>({});
+
+  const updatePosition = () => {
+    if (termRef.current) {
+      const rect = termRef.current.getBoundingClientRect();
+      const tooltipWidth = 288; // w-72 = 18rem = 288px
+      const margin = 16;
+
+      // Calculate horizontal position
+      let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+      let arrowLeft = tooltipWidth / 2;
+
+      // Clamp to viewport
+      if (left < margin) {
+        arrowLeft = rect.left + rect.width / 2 - margin;
+        left = margin;
+      } else if (left + tooltipWidth > window.innerWidth - margin) {
+        const oldLeft = left;
+        left = window.innerWidth - tooltipWidth - margin;
+        arrowLeft = tooltipWidth / 2 + (oldLeft - left);
+      }
+
+      setTooltipStyle({
+        position: 'fixed',
+        left: `${left}px`,
+        top: `${rect.top - 8}px`,
+        transform: 'translateY(-100%)',
+      });
+
+      setArrowStyle({
+        left: `${arrowLeft}px`,
+        transform: 'translateX(-50%)',
+      });
+    }
+  };
+
+  const handleMouseEnter = () => {
+    updatePosition();
+    setIsVisible(true);
+  };
 
   return (
     <span className="relative inline">
       <span
+        ref={termRef}
         className="border-b-2 border-dashed border-amber-400 cursor-help hover:bg-amber-50 transition-colors"
-        onMouseEnter={() => setIsVisible(true)}
+        onMouseEnter={handleMouseEnter}
         onMouseLeave={() => setIsVisible(false)}
-        onClick={() => setIsVisible(!isVisible)}
+        onClick={() => {
+          updatePosition();
+          setIsVisible(!isVisible);
+        }}
       >
         {term}
       </span>
       {isVisible && (
-        <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-72 p-3 bg-neutral-900 text-white text-sm font-normal rounded-xl shadow-xl z-50 pointer-events-none">
+        <span
+          style={tooltipStyle}
+          className="w-72 p-3 bg-neutral-900 text-white text-sm font-normal rounded-xl shadow-xl z-50 pointer-events-none"
+        >
           <span className="block text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
             Think of it like...
           </span>
           {metaphor}
-          <span className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-neutral-900" />
+          <span
+            style={arrowStyle}
+            className="absolute top-full w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-neutral-900"
+          />
         </span>
       )}
     </span>
@@ -179,7 +231,7 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
                   {moduleIndex === 0 && (
                     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${priceUp ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
                       {priceUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                      <span className="font-bold text-sm">{priceUp ? '+' : ''}${priceDiff} per share</span>
+                      <span className="font-bold text-sm">{priceUp ? '+' : ''}${priceDiff} profit per stock owned</span>
                     </div>
                   )}
                 </div>

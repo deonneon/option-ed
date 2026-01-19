@@ -56,12 +56,23 @@ export const MODULES: Module[] = [
       {
         text: "Tesla ($TSLA) is trading at $200. You think the price will go up after their big announcement tomorrow.",
         actionLabel: "Watch What Happens",
-        setup: { stockSymbol: 'TSLA', simPrice: 200 }
+        setup: { stockSymbol: 'TSLA', simPrice: 200 },
+        math: [
+          { label: "Stock", value: "TSLA" },
+          { label: "Current price", value: "$200" },
+          { label: "Your prediction", value: "📈 UP", highlight: true }
+        ]
       },
       {
         text: "The announcement was a hit! Tesla jumped to $230. If you owned the stock, you'd have made $30 per share.",
         actionLabel: "What's the Problem?",
-        setup: { simPrice: 230 }
+        setup: { simPrice: 230 },
+        math: [
+          { label: "Bought at", value: "$200" },
+          { label: "Now worth", value: "$230" },
+          { label: "", value: "" },
+          { label: "Profit per share", value: "+$30", highlight: true }
+        ]
       },
       {
         text: "But here's the problem: to buy 100 shares of Tesla at $200, you'd need $20,000. And if Tesla dropped instead? You'd lose real money with no limit.",
@@ -77,6 +88,15 @@ export const MODULES: Module[] = [
         text: "What if you could make money on that move without buying the stock? That's what OPTIONS let you do. Less cash upfront, and your max loss is fixed.",
         actionLabel: "Show Me How",
         setup: { simPrice: 230 },
+        math: [
+          { label: "Buying stock", value: "" },
+          { label: "Cash needed", value: "$20,000" },
+          { label: "If it crashes", value: "Unlimited loss" },
+          { label: "", value: "" },
+          { label: "Buying options", value: "", highlight: true },
+          { label: "Cash needed", value: "~$1,000", highlight: true },
+          { label: "If it crashes", value: "Lose $1,000 max", highlight: true }
+        ],
         tooltips: [
           { term: "OPTIONS", metaphor: "Like a movie ticket: you pay a small fee now for the right to see the show later. If you skip the movie, you only lose the ticket price." }
         ]
@@ -92,6 +112,12 @@ export const MODULES: Module[] = [
         text: "An OPTION is a contract that lets you bet on where a stock will go. A CALL option makes money when the stock goes UP.",
         actionLabel: "Got It",
         setup: { type: 'call', side: 'buy', strike: 210, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "Two types of options", value: "" },
+          { label: "", value: "" },
+          { label: "CALL", value: "Bet on UP 📈", highlight: true },
+          { label: "PUT", value: "Bet on DOWN 📉" }
+        ],
         tooltips: [
           { term: "OPTION", metaphor: "Like a concert ticket: you pay upfront for the right to attend, but you're not forced to go." },
           { term: "CALL option", metaphor: "Like a store coupon that locks in today's price. If the price goes up, your coupon becomes valuable. If it goes down, you just toss the coupon." }
@@ -114,6 +140,13 @@ export const MODULES: Module[] = [
         text: "The STRIKE price ($210) is your target. If Tesla goes ABOVE $210, your call is 'in the money' and has real value. If it stays below? Your option expires worthless.",
         actionLabel: "What Does It Cost?",
         setup: { type: 'call', side: 'buy', strike: 210, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "Current stock price", value: "$200" },
+          { label: "Your strike price", value: "$210" },
+          { label: "", value: "" },
+          { label: "Below $210", value: "Out of the money ❌" },
+          { label: "Above $210", value: "In the money ✅", highlight: true }
+        ],
         tooltips: [
           { term: "STRIKE price", metaphor: "The price printed on your ticket. Like a gift card that says 'Buy one pizza for $15' - $15 is the strike. If pizzas cost $20, your card is valuable." },
           { term: "in the money", metaphor: "Your lottery ticket is a winner. The numbers match, so your ticket has real cash value." },
@@ -208,6 +241,13 @@ export const MODULES: Module[] = [
         text: "A PUT option is the opposite. It makes money when the stock goes DOWN. Think of it as insurance against a crash.",
         actionLabel: "Got It",
         setup: { type: 'put', side: 'buy', strike: 200, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "CALL option", value: "Profits when UP 📈" },
+          { label: "", value: "" },
+          { label: "PUT option", value: "Profits when DOWN 📉", highlight: true },
+          { label: "", value: "" },
+          { label: "Think of it as", value: "Crash insurance 🛡️" }
+        ],
         tooltips: [
           { term: "PUT option", metaphor: "Like car insurance: you pay a small premium hoping you'll never need it, but if you crash, it pays out." }
         ]
@@ -216,6 +256,13 @@ export const MODULES: Module[] = [
         text: "Wait - how can you 'sell' stock you don't own? You're not actually selling stock. You're buying the RIGHT to sell at a set price. Think of it as a betting slip on the stock going down, not actual shares.",
         actionLabel: "That Makes Sense",
         setup: { type: 'put', side: 'buy', strike: 200, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "Common confusion", value: "" },
+          { label: "'Sell' in put option", value: "≠ selling stock" },
+          { label: "", value: "" },
+          { label: "What you're buying", value: "A contract 📜", highlight: true },
+          { label: "The contract says", value: "You CAN sell @ $200" }
+        ],
         tooltips: [
           { term: "RIGHT to sell", metaphor: "Like a pawn shop guarantee: 'We'll buy your guitar for $500 anytime this month.' You don't need to own the guitar yet - the guarantee itself has value if guitar prices drop." }
         ]
@@ -289,6 +336,13 @@ export const MODULES: Module[] = [
         text: "Here's the catch: options EXPIRE. You pay for the right to buy/sell, but only for a limited time. Like a melting ice cube.",
         actionLabel: "See an Example",
         setup: { type: 'call', side: 'buy', strike: 210, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "Stocks", value: "Hold forever ♾️" },
+          { label: "Options", value: "Have expiration date ⏰", highlight: true },
+          { label: "", value: "" },
+          { label: "After expiry", value: "Option = worthless" },
+          { label: "Your money", value: "Gone 💨" }
+        ],
         tooltips: [
           { term: "EXPIRE", metaphor: "Like milk in your fridge - it has a 'use by' date. After that, it's worthless no matter how much you paid." }
         ]
@@ -308,6 +362,14 @@ export const MODULES: Module[] = [
         text: "Why does time kill your option? Because the less time left, the less CHANCE the stock has to move in your favor. Probability shrinks → value shrinks. Wall Street calls this 'theta decay.'",
         actionLabel: "See It In Action",
         setup: { type: 'call', side: 'buy', strike: 210, simPrice: 200, daysLeft: 30 },
+        math: [
+          { label: "More time", value: "More chance to win" },
+          { label: "Less time", value: "Less chance to win" },
+          { label: "", value: "" },
+          { label: "Chance ↓", value: "Value ↓", highlight: true },
+          { label: "", value: "" },
+          { label: "This is called", value: "Theta (Θ) decay" }
+        ],
         tooltips: [
           { term: "theta decay", metaphor: "Like a parking meter ticking down. Every minute that passes, you're losing money - even if nothing else changes." },
           { term: "Probability shrinks", metaphor: "Imagine betting your friend will text you. With a week to wait, good odds. With 5 minutes left? Not looking good." }
@@ -378,6 +440,15 @@ export const MODULES: Module[] = [
         text: "Plot twist: you can SELL options instead of buying them. You collect the fee (premium) upfront, but you take on the risk. You become the casino.",
         actionLabel: "Show Me",
         setup: { stockSymbol: 'KO', type: 'put', side: 'sell', strike: 60, simPrice: 65, daysLeft: 30 },
+        math: [
+          { label: "Buying options", value: "" },
+          { label: "You pay premium", value: "Limited loss" },
+          { label: "You hope to win big", value: "Unlimited gain" },
+          { label: "", value: "" },
+          { label: "Selling options", value: "", highlight: true },
+          { label: "You collect premium", value: "Limited gain" },
+          { label: "You hope nothing happens", value: "Large risk" }
+        ],
         tooltips: [
           { term: "SELL options", metaphor: "Like selling insurance. State Farm collects premiums every month. Most months, nothing happens and they keep it. But when disaster strikes, they pay out big." },
           { term: "become the casino", metaphor: "The house always has an edge - they win most hands but lose occasionally. Option sellers are the house: small wins most of the time, big losses sometimes." }
@@ -396,7 +467,15 @@ export const MODULES: Module[] = [
       {
         text: "Coca-Cola (KO) is stable at $65. Someone wants insurance (a Put) in case it drops to $60. You sell them that Put and collect $500 upfront.",
         actionLabel: "What's the Catch?",
-        setup: { stockSymbol: 'KO', type: 'put', side: 'sell', strike: 60, simPrice: 65, daysLeft: 30 }
+        setup: { stockSymbol: 'KO', type: 'put', side: 'sell', strike: 60, simPrice: 65, daysLeft: 30 },
+        math: [
+          { label: "Stock", value: "KO (Coca-Cola)" },
+          { label: "Current price", value: "$65" },
+          { label: "Strike price", value: "$60" },
+          { label: "", value: "" },
+          { label: "You sell a Put", value: "" },
+          { label: "You receive", value: "+$500", highlight: true }
+        ]
       },
       {
         text: "The catch: your broker will freeze about $6,000 in your account as 'collateral.' If KO drops below $60, you MUST buy 100 shares at $60. No backing out. This is called 'assignment.'",
