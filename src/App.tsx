@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/shared/Layout'
 import ModuleOutline from './components/shared/ModuleOutline'
 import { RotateCcw } from 'lucide-react'
@@ -24,24 +24,28 @@ const App = () => {
   // Current price from step setup
   const [simPrice, setSimPrice] = useState(200)
 
+  // Helper to update prices when step changes
+  const updateStepPrice = useCallback((moduleIdx: number, stepIdx: number, oldPrice: number) => {
+    const targetStep = MODULES[moduleIdx]?.steps[stepIdx]
+    if (targetStep?.setup?.simPrice !== undefined) {
+      const newPrice = targetStep.setup.simPrice
+      setSimPrice(newPrice)
+      if (stepIdx === 0) {
+        setLastInitialPrice(newPrice)
+      } else if (newPrice !== oldPrice) {
+        setLastInitialPrice(oldPrice)
+      }
+    }
+  }, [])
+
   // Check if narrative is complete
   const isLastStep = currentModuleIdx === MODULES.length - 1 &&
                      currentStepIdx === currentModule.steps.length - 1
 
-  // Apply Narrative Step Setup
+  // Apply Narrative Step Setup on mount and when step data changes
   useEffect(() => {
-    if (currentStep?.setup) {
-      const s = currentStep.setup
-
-      // When entering a new module (step 0), reset the baseline price
-      if (currentStepIdx === 0 && s.simPrice !== undefined) {
-        setLastInitialPrice(s.simPrice)
-      } else if (s.simPrice !== undefined && s.simPrice !== simPrice) {
-        setLastInitialPrice(simPrice)
-      }
-
-      if (s.simPrice !== undefined) setSimPrice(s.simPrice)
-    }
+    updateStepPrice(currentModuleIdx, currentStepIdx, simPrice)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentModuleIdx, currentStepIdx])
 
   const { currentLevel, percent } = calculateProgress(totalProfit)
@@ -50,22 +54,33 @@ const App = () => {
   const isFirstStep = currentModuleIdx === 0 && currentStepIdx === 0
 
   // Handlers
-  const handleNextStep = () => {
+  const handleNextStep = useCallback(() => {
+    const oldPrice = simPrice
     if (currentStepIdx < currentModule.steps.length - 1) {
-      setCurrentStepIdx(prev => prev + 1)
+      const nextStepIdx = currentStepIdx + 1
+      setCurrentStepIdx(nextStepIdx)
+      updateStepPrice(currentModuleIdx, nextStepIdx, oldPrice)
     } else if (currentModuleIdx < MODULES.length - 1) {
-      setCurrentModuleIdx(prev => prev + 1)
+      const nextModuleIdx = currentModuleIdx + 1
+      setCurrentModuleIdx(nextModuleIdx)
       setCurrentStepIdx(0)
+      updateStepPrice(nextModuleIdx, 0, oldPrice)
     }
-  }
+  }, [currentModuleIdx, currentStepIdx, simPrice, currentModule, updateStepPrice])
 
   const handlePrevStep = () => {
+    const oldPrice = simPrice
     if (currentStepIdx > 0) {
-      setCurrentStepIdx(prev => prev - 1)
+      const prevStepIdx = currentStepIdx - 1
+      setCurrentStepIdx(prevStepIdx)
+      updateStepPrice(currentModuleIdx, prevStepIdx, oldPrice)
     } else if (currentModuleIdx > 0) {
-      const prevModule = MODULES[currentModuleIdx - 1]
-      setCurrentModuleIdx(prev => prev - 1)
-      setCurrentStepIdx(prevModule.steps.length - 1)
+      const prevModuleIdx = currentModuleIdx - 1
+      const prevModule = MODULES[prevModuleIdx]
+      const lastStepIdx = prevModule.steps.length - 1
+      setCurrentModuleIdx(prevModuleIdx)
+      setCurrentStepIdx(lastStepIdx)
+      updateStepPrice(prevModuleIdx, lastStepIdx, oldPrice)
     }
   }
 
@@ -78,16 +93,10 @@ const App = () => {
   }
 
   const handleNavigate = (moduleIdx: number, stepIdx: number) => {
+    const oldPrice = simPrice
     setCurrentModuleIdx(moduleIdx)
     setCurrentStepIdx(stepIdx)
-    // Reset price when navigating to a new module
-    const targetStep = MODULES[moduleIdx]?.steps[stepIdx]
-    if (targetStep?.setup?.simPrice !== undefined) {
-      setSimPrice(targetStep.setup.simPrice)
-      if (stepIdx === 0) {
-        setLastInitialPrice(targetStep.setup.simPrice)
-      }
-    }
+    updateStepPrice(moduleIdx, stepIdx, oldPrice)
   }
 
   // Keyboard Navigation
@@ -100,7 +109,7 @@ const App = () => {
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentModuleIdx, currentStepIdx, isLastStep])
+  }, [handleNextStep, isLastStep])
 
   return (
     <Layout
@@ -108,12 +117,6 @@ const App = () => {
         <div className="flex items-center gap-8">
           <div className="flex-1">
             <ProgressBar percent={percent} levelName={currentLevel.title} />
-          </div>
-          <div className="shrink-0 pl-8 border-l border-neutral-100 text-right">
-            <span className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-300 block mb-1">Total Vault</span>
-            <span className={`text-xl font-mono font-bold tracking-tighter ${totalProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-              ${totalProfit.toFixed(0)}
-            </span>
           </div>
           <button
             onClick={handleReset}
