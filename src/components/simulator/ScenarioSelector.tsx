@@ -11,7 +11,7 @@ export interface Scenario {
   icon: React.ReactNode;
 }
 
-export const SCENARIOS: Scenario[] = [
+const SCENARIOS: Scenario[] = [
   {
     id: 'lottery-ticket',
     name: 'Lottery Ticket',
