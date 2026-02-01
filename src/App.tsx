@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/shared/Layout'
 import ModuleOutline from './components/shared/ModuleOutline'
+import SplashScreen from './components/shared/SplashScreen'
 import { RotateCcw, Maximize2 } from 'lucide-react'
 import NarrativeView from './components/views/NarrativeView'
 import ProgressBar from './components/gamification/ProgressBar'
@@ -10,6 +11,24 @@ import type { Level, ContentVariant } from './lib/progression'
 
 const STORAGE_KEY = 'optioned-progress'
 const VARIANT_STORAGE_KEY = 'optioned-content-variant'
+const ONBOARDING_KEY = 'optioned-onboarding-complete'
+
+const loadOnboardingComplete = (): boolean => {
+  try {
+    return localStorage.getItem(ONBOARDING_KEY) === 'true'
+  } catch (e) {
+    console.error('Failed to load onboarding state:', e)
+  }
+  return false
+}
+
+const saveOnboardingComplete = () => {
+  try {
+    localStorage.setItem(ONBOARDING_KEY, 'true')
+  } catch (e) {
+    console.error('Failed to save onboarding state:', e)
+  }
+}
 
 const loadContentVariant = (): ContentVariant => {
   try {
@@ -67,12 +86,23 @@ const clearProgress = () => {
 }
 
 const App = () => {
+  // Onboarding state
+  const [onboardingComplete, setOnboardingComplete] = useState(loadOnboardingComplete)
+
   // Load saved progress on mount
   const savedProgress = loadProgress()
 
   // Content variant state (persisted)
   const [contentVariant, setContentVariant] = useState<ContentVariant>(loadContentVariant)
   const MODULES = getModules(contentVariant)
+
+  // Handle variant selection from splash screen
+  const handleSplashVariantSelect = (variant: ContentVariant) => {
+    setContentVariant(variant)
+    saveContentVariant(variant)
+    setOnboardingComplete(true)
+    saveOnboardingComplete()
+  }
 
   // Save variant when it changes
   useEffect(() => {
@@ -240,11 +270,14 @@ const App = () => {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [handleNextStep, handlePrevStep, isLastStep, isFirstStep, isPresentationMode])
 
+  // Show splash screen if onboarding not complete
+  if (!onboardingComplete) {
+    return <SplashScreen onSelectVariant={handleSplashVariantSelect} />
+  }
+
   return (
     <Layout
       isPresentationMode={isPresentationMode}
-      contentVariant={contentVariant}
-      onContentVariantChange={setContentVariant}
       presentationProgress={{
         modules: MODULES,
         currentModuleIdx,
@@ -261,6 +294,28 @@ const App = () => {
               currentStep={currentStepNumber}
               totalSteps={totalSteps}
             />
+          </div>
+          <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg shrink-0">
+            <button
+              onClick={() => setContentVariant('default')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                contentVariant === 'default'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-700'
+              }`}
+            >
+              Default
+            </button>
+            <button
+              onClick={() => setContentVariant('tech')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                contentVariant === 'tech'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-700'
+              }`}
+            >
+              Tech Bros
+            </button>
           </div>
           <button
             onClick={() => setIsPresentationMode(true)}
