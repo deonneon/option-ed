@@ -42,8 +42,9 @@ const TooltipTerm: React.FC<{ term: string; metaphor: string }> = ({
   const updatePosition = () => {
     if (termRef.current) {
       const rect = termRef.current.getBoundingClientRect();
-      const tooltipWidth = 288; // w-72 = 18rem = 288px
-      const margin = 16;
+      const margin = 12;
+      // Responsive tooltip width - smaller on mobile
+      const tooltipWidth = Math.min(288, window.innerWidth - margin * 2);
 
       // Calculate horizontal position
       let left = rect.left + rect.width / 2 - tooltipWidth / 2;
@@ -64,6 +65,7 @@ const TooltipTerm: React.FC<{ term: string; metaphor: string }> = ({
         left: `${left}px`,
         top: `${rect.top - 8}px`,
         transform: "translateY(-100%)",
+        width: `${tooltipWidth}px`,
       });
 
       setArrowStyle({
@@ -95,7 +97,7 @@ const TooltipTerm: React.FC<{ term: string; metaphor: string }> = ({
       {isVisible && (
         <span
           style={tooltipStyle}
-          className="w-72 p-3 bg-neutral-900 text-white text-sm font-normal rounded-xl shadow-xl z-50 pointer-events-none"
+          className="p-3 bg-neutral-900 text-white text-xs sm:text-sm font-normal rounded-xl shadow-xl z-50 pointer-events-none"
         >
           <span className="block text-amber-400 text-xs font-bold uppercase tracking-wider mb-1">
             Think of it like...
@@ -240,55 +242,55 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
     return (
       <div className="h-full w-full flex flex-col bg-white overflow-hidden">
         {/* Header - compact */}
-        <div className="shrink-0 pt-4 pb-2 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-100 text-neutral-500 text-[10px] font-mono font-bold uppercase tracking-[0.2em]">
+        <div className="shrink-0 pt-3 sm:pt-4 pb-2 text-center px-4">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-neutral-100 text-neutral-500 text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em]">
             Module {moduleIndex} • {moduleTitle}
           </div>
         </div>
 
         {/* Main Content - uses remaining space */}
-        <div className="flex-1 min-h-0 flex items-center justify-center px-8 lg:px-16 xl:px-24 py-4">
-          <div className={`w-full h-full max-w-7xl flex items-center ${hasRightContent ? 'justify-between gap-8 lg:gap-12' : 'justify-center'}`}>
+        <div className="flex-1 min-h-0 flex items-center justify-center px-4 sm:px-8 lg:px-16 xl:px-24 py-2 sm:py-4 overflow-y-auto">
+          <div className={`w-full max-w-7xl flex flex-col md:flex-row md:items-center ${hasRightContent ? 'md:justify-between gap-6 md:gap-8 lg:gap-12' : 'items-center justify-center'}`}>
 
             {/* Left Column: Text + Price */}
-            <div className={`flex flex-col justify-center ${hasRightContent ? 'flex-1 max-w-[55%]' : 'items-center text-center max-w-4xl'}`}>
+            <div className={`flex flex-col justify-center ${hasRightContent ? 'md:flex-1 md:max-w-[55%]' : 'items-center text-center max-w-4xl'}`}>
               {/* Headline */}
-              <h2 className={`text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight leading-[1.2] text-neutral-900 mb-6 ${hasRightContent ? 'text-left' : 'text-center'}`}>
+              <h2 className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight leading-[1.2] text-neutral-900 mb-4 sm:mb-6 ${hasRightContent ? 'text-center md:text-left' : 'text-center'}`}>
                 <TextWithTooltips text={stepText} tooltips={tooltips} />
               </h2>
 
               {/* Price Display */}
               {hasPriceChange ? (
-                <div className="space-y-3">
-                  <div className={`flex items-center gap-6 lg:gap-8 ${hasRightContent ? 'justify-start' : 'justify-center'}`}>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className={`flex items-center gap-4 sm:gap-6 lg:gap-8 ${hasRightContent ? 'justify-center md:justify-start' : 'justify-center'}`}>
                     <div className="text-center">
-                      <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-neutral-300 block mb-1 font-bold">Was</span>
-                      <div className="text-3xl lg:text-4xl font-mono font-medium text-neutral-300">${initialPrice}</div>
+                      <span className="text-[8px] sm:text-[9px] font-mono uppercase tracking-[0.2em] text-neutral-300 block mb-1 font-bold">Was</span>
+                      <div className="text-2xl sm:text-3xl lg:text-4xl font-mono font-medium text-neutral-300">${initialPrice}</div>
                     </div>
                     <div className="flex flex-col items-center">
-                      <ArrowRight className="w-5 h-5 text-neutral-300" />
-                      <span className={`text-xs font-mono font-bold mt-1 ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>
+                      <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-300" />
+                      <span className={`text-[10px] sm:text-xs font-mono font-bold mt-1 ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>
                         {priceUp ? "+" : ""}{percentChange.toFixed(0)}%
                       </span>
                     </div>
                     <div className="text-center">
-                      <span className={`text-[9px] font-mono uppercase tracking-[0.2em] block mb-1 font-bold ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>Now</span>
-                      <div className={`text-3xl lg:text-4xl font-mono font-bold ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>${currentPrice}</div>
+                      <span className={`text-[8px] sm:text-[9px] font-mono uppercase tracking-[0.2em] block mb-1 font-bold ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>Now</span>
+                      <div className={`text-2xl sm:text-3xl lg:text-4xl font-mono font-bold ${priceUp ? "text-emerald-500" : "text-rose-500"}`}>${currentPrice}</div>
                     </div>
                   </div>
                   {moduleIndex === 0 && (
-                    <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${priceUp ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}>
-                      {priceUp ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    <div className={`inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs sm:text-sm ${priceUp ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"} ${hasRightContent ? 'mx-auto md:mx-0' : ''}`}>
+                      {priceUp ? <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" /> : <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />}
                       <span className="font-bold">{priceUp ? "+" : ""}${priceDiff} profit per stock owned</span>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className={hasRightContent ? 'text-left' : 'text-center'}>
-                  <div className="text-5xl lg:text-6xl xl:text-7xl font-mono font-bold tracking-tighter text-neutral-900 mb-2">
+                <div className={hasRightContent ? 'text-center md:text-left' : 'text-center'}>
+                  <div className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-mono font-bold tracking-tighter text-neutral-900 mb-2">
                     ${currentPrice}
                   </div>
-                  <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-400 font-bold">
+                  <span className="text-[9px] sm:text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-400 font-bold">
                     Current Price
                   </span>
                 </div>
@@ -313,33 +315,33 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
 
             {/* Right Column: Math + Prediction stacked */}
             {hasRightContent && (
-              <div className="shrink-0 flex flex-col gap-4 max-w-[400px] max-h-full overflow-y-auto">
+              <div className="w-full md:w-auto md:shrink-0 flex flex-col gap-3 sm:gap-4 md:max-w-[400px] md:max-h-full md:overflow-y-auto">
                 {/* Math Panel */}
                 {math && (
-                  <div className="bg-neutral-50 rounded-2xl border border-neutral-200 p-5 shadow-sm">
-                    <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 mb-3">
+                  <div className="bg-neutral-50 rounded-xl sm:rounded-2xl border border-neutral-200 p-4 sm:p-5 shadow-sm">
+                    <div className="text-[8px] sm:text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 mb-2 sm:mb-3">
                       The Math
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1.5 sm:space-y-2">
                       {math.map((line, index) => (
                         <div
                           key={index}
-                          className={`flex items-center justify-between gap-4 ${
+                          className={`flex items-center justify-between gap-3 sm:gap-4 ${
                             line.highlight ? "font-bold" : ""
-                          } ${line.operation === "=" ? "pt-2 border-t border-neutral-200" : ""}`}
+                          } ${line.operation === "=" ? "pt-1.5 sm:pt-2 border-t border-neutral-200" : ""}`}
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2">
                             {line.operation && (
-                              <span className={`w-4 text-center font-mono ${line.operation === "=" ? "text-neutral-400" : "text-neutral-300"}`}>
+                              <span className={`w-3 sm:w-4 text-center font-mono text-xs sm:text-sm ${line.operation === "=" ? "text-neutral-400" : "text-neutral-300"}`}>
                                 {line.operation}
                               </span>
                             )}
-                            {!line.operation && <span className="w-4" />}
-                            <span className={`text-sm ${line.highlight ? "text-neutral-900" : "text-neutral-600"}`}>
+                            {!line.operation && <span className="w-3 sm:w-4" />}
+                            <span className={`text-xs sm:text-sm ${line.highlight ? "text-neutral-900" : "text-neutral-600"}`}>
                               {line.label}
                             </span>
                           </div>
-                          <span className={`font-mono text-sm ${line.highlight ? "text-emerald-600 font-bold" : "text-neutral-900"}`}>
+                          <span className={`font-mono text-xs sm:text-sm ${line.highlight ? "text-emerald-600 font-bold" : "text-neutral-900"}`}>
                             {line.value}
                           </span>
                         </div>
@@ -350,18 +352,18 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
 
                 {/* Prediction Question */}
                 {prediction && (
-                  <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100">
-                    <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-amber-600 mb-2">
+                  <div className="bg-amber-50 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-amber-100">
+                    <div className="text-[8px] sm:text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-amber-600 mb-1.5 sm:mb-2">
                       Quick Check
                     </div>
-                    <p className="font-bold text-neutral-900 mb-3 text-sm">{prediction.question}</p>
-                    <div className="space-y-1.5">
+                    <p className="font-bold text-neutral-900 mb-2 sm:mb-3 text-xs sm:text-sm">{prediction.question}</p>
+                    <div className="space-y-1 sm:space-y-1.5">
                       {prediction.options.map((option, idx) => {
                         const isSelected = selectedAnswer === idx;
                         const isCorrectOption = idx === prediction.correctIndex;
                         const showResult = hasAnswered;
 
-                        let buttonStyle = "bg-white border-neutral-200 hover:border-amber-400 hover:bg-amber-50";
+                        let buttonStyle = "bg-white border-neutral-200 hover:border-amber-400 hover:bg-amber-50 active:bg-amber-100";
                         if (showResult && isCorrectOption) {
                           buttonStyle = "bg-emerald-50 border-emerald-400 text-emerald-700";
                         } else if (showResult && isSelected && !isCorrectOption) {
@@ -380,11 +382,11 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
                               }
                             }}
                             disabled={hasAnswered}
-                            className={`w-full text-left px-3 py-2 rounded-lg border-2 transition-all text-sm ${buttonStyle} ${hasAnswered ? "cursor-default" : "cursor-pointer"}`}
+                            className={`w-full text-left px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border-2 transition-all text-xs sm:text-sm ${buttonStyle} ${hasAnswered ? "cursor-default" : "cursor-pointer"}`}
                           >
-                            <div className="flex items-center gap-2">
-                              {showResult && isCorrectOption && <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />}
-                              {showResult && isSelected && !isCorrectOption && <XCircle className="w-4 h-4 text-rose-500 shrink-0" />}
+                            <div className="flex items-center gap-1.5 sm:gap-2">
+                              {showResult && isCorrectOption && <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500 shrink-0" />}
+                              {showResult && isSelected && !isCorrectOption && <XCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 shrink-0" />}
                               <span>{option}</span>
                             </div>
                           </button>
@@ -392,7 +394,7 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
                       })}
                     </div>
                     {hasAnswered && (
-                      <div className={`mt-3 p-2 rounded-lg text-sm ${isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                      <div className={`mt-2 sm:mt-3 p-2 rounded-lg text-xs sm:text-sm ${isCorrect ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
                         <span className="font-bold">{isCorrect ? "Correct!" : "Not quite."}</span> {prediction.explanation}
                       </div>
                     )}
@@ -420,36 +422,36 @@ const NarrativeView: React.FC<NarrativeViewProps> = ({
         </div>
 
         {/* Footer - fixed at bottom */}
-        <div className="shrink-0 pb-6 pt-2 text-center space-y-2">
-          <div className="flex items-center justify-center gap-4">
+        <div className="shrink-0 pb-4 sm:pb-6 pt-2 text-center space-y-2 px-4">
+          <div className="flex items-center justify-center gap-2 sm:gap-4">
             {!isFirstStep && (
               <button
                 onClick={onPrev}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-neutral-100 text-neutral-600 rounded-full font-bold text-base hover:bg-neutral-200 transition-all active:scale-[0.98]"
+                className="flex items-center justify-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-neutral-100 text-neutral-600 rounded-full font-bold text-sm sm:text-base hover:bg-neutral-200 transition-all active:scale-[0.98]"
               >
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Back
               </button>
             )}
             {isLastStep ? (
               <button
                 onClick={onReset}
-                className="group flex items-center justify-center gap-2 px-8 py-3 bg-emerald-600 text-white rounded-full font-bold text-base hover:bg-emerald-700 transition-all active:scale-[0.98] shadow-xl"
+                className="group flex items-center justify-center gap-1.5 sm:gap-2 px-5 sm:px-8 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-full font-bold text-sm sm:text-base hover:bg-emerald-700 transition-all active:scale-[0.98] shadow-xl"
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 Start Over
               </button>
             ) : (
               <button
                 onClick={onNext}
-                className="group flex items-center justify-center gap-2 px-8 py-3 rounded-full font-bold text-base transition-all active:scale-[0.98] shadow-xl bg-neutral-900 text-white hover:bg-neutral-800"
+                className="group flex items-center justify-center gap-1.5 sm:gap-2 px-5 sm:px-8 py-2.5 sm:py-3 rounded-full font-bold text-sm sm:text-base transition-all active:scale-[0.98] shadow-xl bg-neutral-900 text-white hover:bg-neutral-800"
               >
                 {actionLabel}
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </button>
             )}
           </div>
-          <p className="text-[9px] font-mono text-neutral-300 uppercase font-bold tracking-[0.2em]">
+          <p className="hidden sm:block text-[9px] font-mono text-neutral-300 uppercase font-bold tracking-[0.2em]">
             ← → Arrow keys to navigate • ESC to exit
           </p>
         </div>

@@ -12,25 +12,25 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ percent, levelName, currentSt
   const coursePercent = showCourseProgress ? Math.round((currentStep / totalSteps) * 100) : 0;
 
   return (
-    <div className="w-full flex items-center gap-6">
+    <div className="w-full flex items-center gap-4 md:gap-6">
       {/* Course Progress */}
       {showCourseProgress && (
-        <div className="shrink-0 flex items-baseline gap-3">
+        <div className="shrink-0 flex items-baseline gap-2 md:gap-3">
           <div className="flex items-baseline gap-1">
-            <span className="text-sm font-bold tabular-nums">{currentStep}</span>
-            <span className="text-[10px] text-neutral-400">/ {totalSteps}</span>
+            <span className="text-xs md:text-sm font-bold tabular-nums">{currentStep}</span>
+            <span className="text-[9px] md:text-[10px] text-neutral-400">/ {totalSteps}</span>
           </div>
-          <span className="text-[9px] font-mono uppercase tracking-widest text-neutral-400 whitespace-nowrap">
+          <span className="hidden sm:inline text-[9px] font-mono uppercase tracking-widest text-neutral-400 whitespace-nowrap">
             {coursePercent}% complete
           </span>
         </div>
       )}
 
       {/* Rank Progress */}
-      <div className="flex-1">
-        <div className="flex justify-between items-end mb-2 gap-4">
-          <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-400 whitespace-nowrap">Current Rank</span>
-          <span className="text-xs font-bold uppercase tracking-tight whitespace-nowrap">{levelName}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex justify-between items-end mb-1.5 md:mb-2 gap-2 md:gap-4">
+          <span className="hidden sm:inline text-[9px] md:text-[10px] font-mono uppercase tracking-widest text-neutral-400 whitespace-nowrap">Current Rank</span>
+          <span className="text-[10px] md:text-xs font-bold uppercase tracking-tight whitespace-nowrap truncate">{levelName}</span>
         </div>
         <div className="h-1 w-full bg-neutral-100 rounded-full overflow-hidden">
           <div

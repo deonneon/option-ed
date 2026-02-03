@@ -1,12 +1,14 @@
 import React from 'react';
 import { Check } from 'lucide-react';
-import type { Module } from '../../lib/progression';
+import type { Module, ContentVariant } from '../../lib/progression';
 
 interface ModuleOutlineProps {
   modules: Module[];
   currentModuleIdx: number;
   currentStepIdx: number;
   onNavigate: (moduleIdx: number, stepIdx: number) => void;
+  contentVariant?: ContentVariant;
+  onVariantChange?: (variant: ContentVariant) => void;
 }
 
 const ModuleOutline: React.FC<ModuleOutlineProps> = ({
@@ -14,9 +16,42 @@ const ModuleOutline: React.FC<ModuleOutlineProps> = ({
   currentModuleIdx,
   currentStepIdx,
   onNavigate,
+  contentVariant,
+  onVariantChange,
 }) => {
   return (
     <div className="p-4">
+      {/* Mobile-only variant toggle */}
+      {contentVariant && onVariantChange && (
+        <div className="lg:hidden mb-6 pb-4 border-b border-neutral-200">
+          <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 mb-3 px-2">
+            Content Style
+          </div>
+          <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg">
+            <button
+              onClick={() => onVariantChange('default')}
+              className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
+                contentVariant === 'default'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-700'
+              }`}
+            >
+              Default
+            </button>
+            <button
+              onClick={() => onVariantChange('tech')}
+              className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
+                contentVariant === 'tech'
+                  ? 'bg-white text-neutral-900 shadow-sm'
+                  : 'text-neutral-500 hover:text-neutral-700'
+              }`}
+            >
+              Tech Bros
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 mb-4 px-2">
         Modules
       </div>

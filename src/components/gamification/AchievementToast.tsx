@@ -23,9 +23,9 @@ const AchievementToast: React.FC<AchievementToastProps> = ({ level, onClose }) =
           initial={{ opacity: 0, y: 50, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-          className="fixed bottom-8 right-8 z-[100] w-80"
+          className="fixed bottom-4 sm:bottom-8 left-4 right-4 sm:left-auto sm:right-8 z-[100] sm:w-80"
         >
-          <div className="bg-neutral-900 border border-neutral-800 text-white p-6 rounded-3xl shadow-2xl overflow-hidden relative">
+          <div className="bg-neutral-900 border border-neutral-800 text-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden relative">
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 blur-3xl rounded-full -mr-16 -mt-16" />
             

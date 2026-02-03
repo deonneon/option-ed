@@ -286,8 +286,8 @@ const App = () => {
         onExit: () => setIsPresentationMode(false),
       }}
       headerContent={
-        <div className="flex items-center gap-8">
-          <div className="flex-1">
+        <div className="flex items-center gap-4 lg:gap-8">
+          <div className="flex-1 min-w-0">
             <ProgressBar
               percent={percent}
               levelName={currentLevel.title}
@@ -295,7 +295,7 @@ const App = () => {
               totalSteps={totalSteps}
             />
           </div>
-          <div className="flex gap-1 p-1 bg-neutral-100 rounded-lg shrink-0">
+          <div className="hidden lg:flex gap-1 p-1 bg-neutral-100 rounded-lg shrink-0">
             <button
               onClick={() => setContentVariant('default')}
               className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
@@ -339,6 +339,8 @@ const App = () => {
           currentModuleIdx={currentModuleIdx}
           currentStepIdx={currentStepIdx}
           onNavigate={handleNavigate}
+          contentVariant={contentVariant}
+          onVariantChange={setContentVariant}
         />
       }
     >

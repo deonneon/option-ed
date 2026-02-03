@@ -27,10 +27,10 @@ const PresentationProgressTracker: React.FC<PresentationProgressTrackerProps> = 
   return (
     <div className="group fixed left-0 top-0 h-full z-50">
       {/* Hover trigger zone - invisible but captures hover */}
-      <div className="absolute left-0 top-0 h-full w-16" />
+      <div className="absolute left-0 top-0 h-full w-12 sm:w-16" />
 
-      {/* Always-visible dots */}
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-10">
+      {/* Always-visible dots - hidden on very small screens */}
+      <div className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 flex-col gap-2 z-10">
         {modules.map((_, moduleIdx) => {
           const isCurrent = moduleIdx === currentModuleIdx;
           const isCompleted = moduleIdx < currentModuleIdx;
@@ -51,7 +51,7 @@ const PresentationProgressTracker: React.FC<PresentationProgressTrackerProps> = 
       </div>
 
       {/* Slide-in panel */}
-      <div className="absolute left-0 top-0 h-full w-64 bg-white border-r border-neutral-200 shadow-xl transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out flex flex-col">
+      <div className="absolute left-0 top-0 h-full w-[85vw] max-w-64 bg-white border-r border-neutral-200 shadow-xl transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out flex flex-col">
         {/* Header section */}
         <div className="p-4 border-b border-neutral-100">
           <div className="text-[9px] font-mono font-bold uppercase tracking-[0.2em] text-neutral-400 mb-2">
